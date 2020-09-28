@@ -1,4 +1,8 @@
-﻿using System;
+/*
+Programa desenvolvido por Diego Berger Tellaroli - https://github.com/diego-tella/
+Ainda está em desenvolvimento. Em breve irei adicionar threads e outras coisas para deixar o brute-force mais rápido.
+*/
+using System;
 using System.IO;
 using Renci.SshNet;
 using System.Net.Sockets;
