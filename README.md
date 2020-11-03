@@ -1,2 +1,2 @@
 # BruteSSH
-Um simples brute-force para SSH.
+A simple Brute-Force for SSH developed in C#.
