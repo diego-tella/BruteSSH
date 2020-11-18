@@ -121,19 +121,32 @@ namespace Brute_SSH
                             {
                                 Console.WriteLine("Abrindo shell...");
                                 client.Connect();
+
                                 while (true)
                                 {
-                                    if (!bol2)
-                                        Console.WriteLine("Shell aberta. Digite exit para sair.");
-                                    else
-                                        Console.WriteLine("$");
-                                    bol2 = true;
-                                    var comand = Console.ReadLine();
-                                    var output = client.RunCommand(comand);
-                                    if (comand.ToString() == "exit")
-                                        break;
-                                    else
-                                        Console.WriteLine(output.Result);
+                                    try
+                                    {
+                                        if (!bol2)
+                                            Console.WriteLine("Shell aberta. Digite exit para sair.");
+                                        else
+                                            Console.Write("$ ");
+                                        bol2 = true;
+                                        var comand = Console.ReadLine();
+                                        var output = client.RunCommand(comand);
+                                        if (comand.ToString() == "exit")
+                                            break;
+                                        else
+                                            Console.WriteLine(output.Result);
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        if (ex.ToString().Contains("CommandText property is empty"))
+                                        {
+
+                                        }
+                                        else
+                                            Console.WriteLine("Erro!");
+                                    }
                                 }
                                 client.Disconnect();
                                 break;
