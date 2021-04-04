@@ -19,11 +19,6 @@ namespace Brute_SSH
         public static string[] senhas = new string[6];
         public static string wordlist;
 
-        public static List<string> list1 = new List<string>();
-        public static List<string> list2 = new List<string>();
-        public static List<string> list3 = new List<string>();
-        public static List<string> list4 = new List<string>();
-
         public static void banner()
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -110,7 +105,6 @@ namespace Brute_SSH
             }
             Console.WriteLine("Loading wordlist...");
             wordlist = word;
-            threads();
             int ae = -1;
             try
             {
