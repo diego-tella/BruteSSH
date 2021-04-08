@@ -105,7 +105,7 @@ namespace Brute_SSH
             }
             catch(Exception e)
             {
-                Console.WriteLine("Wordlist was not found."); //there is not a file text called "wordlist" in the directory
+                Console.WriteLine("Wordlist was not found."); //there is not a text file called "wordlist" in the directory
                 Environment.Exit(0);
             }
         }
