@@ -88,7 +88,7 @@ namespace Brute_SSH
                 while ((word = str.ReadLine()) != null)
                 {
                     cont++;
-                    if (cont == 1) //tá pulando 1 a cada 5
+                    if (cont == 1) 
                         list1.Add(word);
                     else if (cont == 2)
                         list2.Add(word);
