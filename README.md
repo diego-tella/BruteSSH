@@ -12,11 +12,11 @@ You can download the zip file here and unzip it on your computer.
 ```
 BruteSSH/Brute SSH/bin/Debug/netcoreapp3.1/
 ```
-To run the program.<br><br>
+To find the executable file and run the program.<br><br>
 To run the program correctly, just follow the steps that the program asks for, such as the host and the port that runs the SSH service.
 <img src="images/default.png" >
 <br>
 <h1>Wordlist</h1>
 There is a simple wordlist in the executable directory that can help you, in case you don't have any wordlist available. Still, you can choose which wordlist you want, passing the path, as shown below:
 <img src="images/wordlist.png" >
-If you want to use the default wordlist in the directory, jtst press the enter key, you will not need to write the path again.
+If you want to use the default wordlist in the directory, just press the enter key, you will not need to write the path again.
