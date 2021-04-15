@@ -13,7 +13,7 @@ You can download the zip file here and unzip it on your computer.
 BruteSSH/Brute SSH/bin/Debug/netcoreapp3.1/
 ```
 To find the executable file and run the program.<br><br>
-To run the program correctly, just follow the steps that the program asks for, such as the host and the port that runs the SSH service.
+To run the program correctly, just follow the steps that the program asks for, such as the host and the port that runs the SSH service.<br>
 <img src="images/default.png" >
 <br>
 <h1>Wordlist</h1>
